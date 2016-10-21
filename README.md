@@ -3,7 +3,7 @@
 A collection of [test.check][tc] generators for [GraphQL][ql] queries.
 
 [![Build Status](https://travis-ci.org/alumbra/alumbra.generators.svg?branch=master)](https://travis-ci.org/alumbra/alumbra.generators)
-[![Clojars Artifact](https://img.shields.io/clojars/v/alumbra/alumbra.generators.svg)](https://clojars.org/alumbra)
+[![Clojars Project](https://img.shields.io/clojars/v/alumbra/generators.svg)](https://clojars.org/alumbra/generators)
 
 This library can mainly be used to test GraphQL parsers (since the generated
 queries might not be semantically correct).
