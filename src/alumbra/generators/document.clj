@@ -6,10 +6,16 @@
             [clojure.string :as string]))
 
 (def -definition
+  "Generate a single GraphQL definition, being one of:
+
+   - operation
+   - fragment
+   "
   (gen/one-of
     [-operation-definition
      -fragment-definition]))
 
 (def -document
+  "Generate a GraphQL document, consisting of operations and fragments."
   (->> (gen/vector -definition 1 5)
        (gen/fmap #(string/join "\n" %))))

@@ -7,4 +7,12 @@
             :key "mit"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha13" :scope "provided"]
                  [org.clojure/test.check "0.9.0" :scope "provided"]]
+  :profiles {:codox
+             {:plugins [[lein-codox "0.10.0"]]
+              :dependencies [[codox-theme-rdash "0.1.1"]]
+              :codox {:project {:name "alumbra.generators"}
+                      :metadata {:doc/format :markdown}
+                      :themes [:rdash]
+                      :source-uri "https://github.com/alumbra/alumbra.generators/blob/v{version}/{filepath}#L{line}"}}}
+  :aliases {"codox" ["with-profile" "+codox" "codox"]}
   :pedantic? :abort)

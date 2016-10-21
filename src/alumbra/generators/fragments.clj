@@ -7,9 +7,11 @@
             [clojure.string :as string]))
 
 (def -fragment-name
-  (gen/such-that #(not= % "on") -name))
+  "Generate a valid name for a GraphQL fragment."
+  (gen/fmap string/capitalize (gen/such-that #(not= % "on") -name)))
 
 (def -fragment-definition
+  "Generate a valid GraphQL fragment definition."
   (gen/let [n -fragment-name
             t -type-condition
             d (rarely -directives)

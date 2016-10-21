@@ -13,7 +13,30 @@ queries might not be semantically correct).
 
 ## Usage
 
-TODO
+__Document Generator__
+
+This generates a GraphQL document as described in the [GraphQL
+specification][ql-spec].
+
+```clojure
+(require '[alumbra.generators.document :refer [-document]])
+
+(clojure.test.check.generators/sample -document 1)
+;; => ("mutation X($h: [T]! = 0.8e-57753886, $Q: [K]! = 0.1693) { ...")
+```
+
+[ql-spec]: https://facebook.github.io/graphql/
+
+__Schema Generator__
+
+This generates a schema for the GraphQL type system.
+
+```clojure
+(require '[alumbra.generators.schema :refer [-schema]])
+
+(clojure.test.check.generators/sample -schema 1)
+;; => ("schema {query: O, mutation: B}\ninterface G {D(c: [I]): [O]}\nenum F {O}")
+```
 
 ## License
 

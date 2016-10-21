@@ -7,20 +7,33 @@
              [variables :refer [-variable-definitions]]]
             [clojure.string :as string]))
 
-(def -operation-type
-  (gen/elements ["query" "mutation"]))
+(defn- named-operation-gen
+  [t]
+  (gen/let [n (gen/fmap string/capitalize -name)
+            v (maybe -variable-definitions)
+            d (rarely -directives)
+            s -selection-set]
+    (gen/return
+      (str t " " n v
+           (some->> d (str " "))
+           " " s))))
+
+(def -query-definition
+  "Generate a GraphQL `query` definition."
+  (named-operation-gen "query"))
+
+(def -mutation-definition
+  "Generate a GraphQL `mutation` definition."
+  (named-operation-gen "mutation"))
+
+(def -subscription-definition
+  "Generate a GraphQL `subscription` definition."
+  (named-operation-gen "subscription"))
 
 (def -operation-definition
+  "Generate a GraphQL operation definition (e.g. `query`)."
   (gen/one-of
     [-selection-set
-     (gen/let [t -operation-type
-               n (maybe (gen/fmap string/upper-case -name))
-               v (maybe -variable-definitions)
-               d (rarely -directives)
-               s -selection-set]
-       (gen/return
-         (str (if n (str t " "))
-              (if n (str n v " "))
-              (when n
-                (some-> d (str " ")))
-              s)))]))
+     -query-definition
+     -mutation-definition
+     -subscription-definition]))

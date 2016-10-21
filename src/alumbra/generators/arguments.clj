@@ -1,4 +1,4 @@
-(ns alumbra.generators.arguments
+(ns ^:no-doc alumbra.generators.arguments
   (:require [clojure.test.check.generators :as gen]
             [clojure.string :as string]
             [alumbra.generators

@@ -2,23 +2,25 @@
   (:require [clojure.test.check.generators :as gen]
             [clojure.string :as string]))
 
-(defn maybe
+(defn ^:no-doc maybe
   [g]
   (gen/frequency
     [[1 (gen/return nil)]
      [99 g]]))
 
-(defn rarely
+(defn ^:no-doc rarely
   [g]
   (gen/frequency
-    [[9 (gen/return nil)]
-     [1 g]]))
+    [[8 (gen/return nil)]
+     [2 g]]))
 
 (def -name
+  "Generate a valid GraphQL name token."
   (->> (gen/tuple
          gen/char-alpha
-         gen/string-alpha-numeric)
+         gen/string-alphanumeric)
        (gen/fmap #(apply str %))))
 
 (def -variable
+  "Generate a valid GraphQL variable token."
   (gen/fmap #(str "$" %) -name))
