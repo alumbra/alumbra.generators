@@ -8,6 +8,9 @@ A collection of [test.check][tc] generators for [GraphQL][ql] queries.
 [tc]: https://github.com/clojure/test.check
 [ql]: http://graphql.org/
 
+The generated queries are (so far) not semantically correct, so they can mainly
+be used to verify different GraphQL parser implementations.
+
 ## Usage
 
 __[Documentation](https://alumbra.github.io/alumbra.generators/)__
