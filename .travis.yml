@@ -1,5 +1,5 @@
 language: clojure
 lein: lein2
-script: LEIN_JVM_OPTS=-Xmx512m lein2 test
+sudo: required
 jdk:
   - oraclejdk8
