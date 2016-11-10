@@ -110,8 +110,26 @@
 (def -directive-definition
   "Generate a valid GraphQL `directive` definition."
   (gen/let [n -name
-            t -type-name]
-    (str "directive @" n " on " t)))
+            l (gen/elements
+                ["QUERY"
+                 "MUTATION"
+                 "SUBSCRIPTION"
+                 "FIELD"
+                 "FRAGMENT_DEFINITION"
+                 "FRAGMENT_SPREAD"
+                 "INLINE_FRAGMENT"
+                 "SCHEMA"
+                 "SCALAR"
+                 "OBJECT"
+                 "FIELD_DEFINITION"
+                 "ARGUMENT_DEFINITION"
+                 "INTERFACE"
+                 "UNION"
+                 "ENUM"
+                 "ENUM_VALUE"
+                 "INPUT_OBJECT"
+                 "INPUT_FIELD_DEFINITION"])]
+    (str "directive @" n " on " l)))
 
 ;; ## Schema Definition
 
