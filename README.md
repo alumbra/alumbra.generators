@@ -43,6 +43,12 @@ Types](http://graphql.org/learn/schema/) guide, as well as the current state of
 ;; => ("schema {query: O, mutation: B}\ninterface G {D(c: [I]): [O]}\nenum F {O}")
 ```
 
+## Issues
+
+Issue tracking for alumbra is centralized at [alumbra/alumbra][issues].
+
+[issues]: https://github.com/alumbra/alumbra/issues
+
 ## License
 
 ```
