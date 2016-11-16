@@ -1,10 +1,33 @@
 (ns alumbra.generators.schema
   (:require [clojure.test.check.generators :as gen]
             [alumbra.generators
-             [common :refer [-name maybe]]
+             [common :refer [-name maybe rarely]]
              [type :refer [-type -type-name]]
              [value :refer [-float -string -bool -enum -integer]]]
             [clojure.string :as string]))
+
+;; ## Schema Directives
+
+(def -argument
+  (gen/let [n -name
+            v (gen/one-of [-float -string -bool -enum -integer])]
+    (gen/return (str n ":" v))))
+
+(def -arguments
+  (gen/let [args (gen/vector -argument 1 3)]
+    (gen/return
+      (format "(%s)" (string/join ", " args)))))
+
+(def -directive
+  "Generate a single GraphQL directive."
+  (gen/let [n -name
+            a (rarely -arguments)]
+    (gen/return (str "@" n a))))
+
+(def -directives
+  "Generate multiple GraphQL directives, separated by a space."
+  (->> (gen/vector -directive 1 3)
+       (gen/fmap #(string/join " " %))))
 
 ;; ## Type Definition
 
@@ -46,23 +69,35 @@
   "Generate a valid GraphQL `type` definition."
   (gen/let [n -type-name
             i -type-implements
+            d (rarely -directives)
             f -type-definition-fields]
     (str "type " n
          (some->> i (str " "))
+         (some->> d (str " "))
          " "
          f)))
 
 (def -type-extends-definition
   "Generate a valid GraphQL `extend type` definition."
-  (gen/fmap #(str "extend " %) -type-definition))
+  (gen/let [n -type-name
+            i -type-implements
+            f -type-definition-fields]
+    (str "extend type " n
+         (some->> i (str " "))
+         " "
+         f)))
 
 ;; ## Interface Definition
 
 (def -interface-definition
   "Generate a valid GraphQL `interface` definition."
   (gen/let [n -type-name
+            d (rarely -directives)
             f -type-definition-fields]
-    (str "interface " n " " f)))
+    (str "interface " n
+         (some->> d (str " "))
+         " "
+         f)))
 
 ;; ## Input Types
 
@@ -74,8 +109,11 @@
 (def -input-type-definition
   "Generate a valid GraphQL `input` definition."
   (gen/let [n -type-name
+            d (rarely -directives)
             f (gen/vector -input-type-definition-field 1 5)]
-    (str "input " n " {"
+    (str "input " n
+         (some->> d (str " "))
+         " {"
          (string/join ", " f)
          "}")))
 
@@ -92,8 +130,11 @@
   (gen/let [vs (gen/vector
                  (gen/fmap string/upper-case -name)
                  1 4)
+            d (rarely -directives)
             n -type-name]
-    (str "enum " n " {"
+    (str "enum " n
+         (some->> d (str " "))
+         " {"
          (string/join ", " vs)
          "}")))
 
@@ -102,8 +143,10 @@
 (def -union-definition
   "Generate a valid GraphQL `union` definition."
   (gen/let [n -type-name
+            d (rarely -directives)
             vs (gen/vector -type-name 1 5)]
-    (str "union " n " = " (string/join " | " vs))))
+    (str "union " n " = " (string/join " | " vs)
+         (some->> d (str " ")))))
 
 ;; ## Directive Definition
 
@@ -143,8 +186,11 @@
                     "subscription"])
                  {:min-elements 1
                   :max-elements 3})
+            d (rarely -directives)
             vs (gen/vector -type-name (count ks))]
-    (str "schema {"
+    (str "schema"
+         (some->> d (str " "))
+         " {"
          (->> (map #(str %1 ": " %2) ks vs)
               (string/join ", "))
          "}")))
