@@ -31,7 +31,10 @@ specification][ql-spec].
 
 __Schema Generator__
 
-This generates a schema for the GraphQL type system.
+This generates a GraphQL IDL document. There is, as of the writing of this
+README, no complete specification on this, so it is based on the [Schemas and
+Types](http://graphql.org/learn/schema/) guide, as well as the current state of
+[this PR](https://github.com/facebook/graphql/pull/90).
 
 ```clojure
 (require '[alumbra.generators.schema :refer [-schema]])
