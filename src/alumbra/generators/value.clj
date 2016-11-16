@@ -65,6 +65,10 @@
       (gen/return
         (format "{%s}" (string/join ", " fields))))))
 
+(def -null
+  "Generate the GraphQL 'null' value."
+  (gen/return "null"))
+
 (let [wrap #(gen/recursive-gen
               (fn [g]
                 (gen/frequency
@@ -81,7 +85,8 @@
          -float
          -string
          -bool
-         -enum])))
+         -enum
+         -null])))
 
   (def -const
     "Generate a valid GraphQL value (no variables)."
@@ -91,4 +96,5 @@
          -float
          -string
          -bool
-         -enum]))))
+         -enum
+         -null]))))
