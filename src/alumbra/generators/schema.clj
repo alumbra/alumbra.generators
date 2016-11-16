@@ -128,8 +128,9 @@
                  "ENUM"
                  "ENUM_VALUE"
                  "INPUT_OBJECT"
-                 "INPUT_FIELD_DEFINITION"])]
-    (str "directive @" n " on " l)))
+                 "INPUT_FIELD_DEFINITION"])
+            a (maybe -type-definition-arguments)]
+    (str "directive @" n (some->> a (str " ")) " on " l)))
 
 ;; ## Schema Definition
 
