@@ -6,42 +6,55 @@
              [generators :as gen]]
             [clojure.string :as string]))
 
-;; ## Operation Types
+;; ## TODO
+;;
+;; - Variables
+;; - Named Fragments
 
-(defn query
-  [schema]
-)
+;; ## Helpers
 
-(defn mutation
-  [schema]
-  )
+(defn- make-operation-gen
+  [{:keys [schema selection-set-gen]} k]
+  (when-let [t (get-in schema [:schema-root :schema-root-types (name k)])]
+    (selection-set-gen t)))
 
-(defn subscription
-  [schema]
-  )
-
-;; ## Operation
+;; ## Public Functions
 
 (defn operation
-  "Generate a GraphQL operation."
-  [schema]
-  (if-let [gens (->> [(query schema)
-                      (mutation schema)
-                      (subscription schema)]
-                     (filter some?)
-                     (seq))]
-    (gen/one-of gens)
-    (gen/return nil)))
+  "Create a function that can be called with an operation type (e.g.
+   :query, :mutation, :subscription), as well as the name of the operation,
+   and will produce an operation matching the given analyzed schema.
 
-;; ## Document
+   ```clojure
+   (def schema
+     (alumbra.analyzer/analyze-schema
+       \"type Person { ... } ... \"
+       alumbra.parser/parse-schema))
 
-(defn document
-  "Generate a GraphQL document, containing at least one operation, matching the
-   given schema."
-  [schema]
-  (->> (gen/vector (operation schema) 1 3)
-       (gen/fmap #(filter some? %))
-       (gen/fmap #(string/join "\n" %))))
+   (def gen-operation
+     (operation schema))
+
+   (gen/sample (gen-operation :query \"Q\"))
+   ```
+
+   `schema` must conform to `:alumbra/analyzed-schema` (see alumbra.spec)."
+  [schema & [opts]]
+  (let [opts (assoc opts :schema schema)
+        value-gen (value-generators opts)
+        opts (assoc opts :value-gen value-gen)
+        selection-set-gen (selection-set-generators opts)
+        opts (assoc opts :selection-set-gen selection-set-gen)
+        type->gen {:query        (make-operation-gen opts :query)
+                   :mutation     (make-operation-gen opts :mutation)
+                   :subscription (make-operation-gen opts :subscription)}]
+    (fn [k operation-name]
+      (if-let [gen (type->gen k)]
+        (gen/fmap
+          #(str (name k) " " (name operation-name) " " %)
+          gen)
+        (throw
+          (IllegalArgumentException.
+            (str "no generator for operation type: " k)))))))
 
 ;; ## Example
 
@@ -54,12 +67,10 @@
          enum PositionKind { LONG, LAT }
          input Position { x: Int, y: Int, k: PositionKind! }
          type QueryRoot { person(name: String!): Person, random(seed: Position!): PersonOrPet }
-         schema { query: QueryRoot }"
+         type MutationRoot { createPerson(name: String!): Person! }
+         schema { query: QueryRoot, mutation: MutationRoot }"
         (analyzer/analyze-schema parser/parse-schema)))
 
-  (def ss
-    (selection-set-generators
-      {:schema schema
-       :value-gen (value-generators {:schema schema})}))
+  (def gen (operation schema))
 
-  (last (gen/sample (ss "QueryRoot") 100)))
+  (last (gen/sample (gen :query "Q") 100)))
