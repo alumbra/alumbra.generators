@@ -2,6 +2,9 @@
   (:require [alumbra.generators
              [selection-set :refer [selection-set-generators]]
              [value :refer [value-generators]]]
+            [alumbra.generators.raw
+             [document :refer [-document]]
+             [schema :refer [-schema]]]
             [clojure.test.check
              [generators :as gen]]
             [clojure.string :as string]))
@@ -55,6 +58,18 @@
         (throw
           (IllegalArgumentException.
             (str "no generator for operation type: " k)))))))
+
+(defn raw-document
+  "Create a generator for a random (i.e. not semantically sound) GraphQL
+   query document."
+  []
+  -document)
+
+(defn raw-schema
+  "Create a generator for a random (i.e. not semantically sound) GraphQL
+   schema document."
+  []
+  -schema)
 
 ;; ## Example
 

@@ -16,6 +16,7 @@
               :codox {:project {:name "alumbra.generators"}
                       :metadata {:doc/format :markdown}
                       :themes [:rdash]
+                      :namespaces [alumbra.generators]
                       :source-uri "https://github.com/alumbra/alumbra.generators/blob/v{version}/{filepath}#L{line}"}}}
   :aliases {"codox" ["with-profile" "+codox" "codox"]}
   :pedantic? :abort)
