@@ -1,6 +1,6 @@
-(ns alumbra.generators.document
+(ns alumbra.generators.raw.document
   (:require [clojure.test.check.generators :as gen]
-            [alumbra.generators
+            [alumbra.generators.raw
              [fragments :refer [-fragment-definition]]
              [operations :refer [-operation-definition]]]
             [clojure.string :as string]))

@@ -1,6 +1,6 @@
-(ns alumbra.generators.value
+(ns alumbra.generators.raw.value
   (:require [clojure.test.check.generators :as gen]
-            [alumbra.generators.common :refer :all]
+            [alumbra.generators.raw.common :refer :all]
             [clojure.string :as string]))
 
 (def -integer

@@ -1,7 +1,7 @@
-(ns ^:no-doc alumbra.generators.arguments
+(ns ^:no-doc alumbra.generators.raw.arguments
   (:require [clojure.test.check.generators :as gen]
             [clojure.string :as string]
-            [alumbra.generators
+            [alumbra.generators.raw
              [common :refer :all]
              [value :refer [-value]]]))
 

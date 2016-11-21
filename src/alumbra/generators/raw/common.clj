@@ -1,4 +1,4 @@
-(ns alumbra.generators.common
+(ns alumbra.generators.raw.common
   (:require [clojure.test.check.generators :as gen]
             [clojure.string :as string]))
 

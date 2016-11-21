@@ -21,7 +21,7 @@ This generates a GraphQL document as described in the [GraphQL
 specification][ql-spec].
 
 ```clojure
-(require '[alumbra.generators.document :refer [-document]])
+(require '[alumbra.generators.raw.document :refer [-document]])
 
 (clojure.test.check.generators/sample -document 1)
 ;; => ("mutation X($h: [T]! = 0.8e-57753886, $Q: [K]! = 0.1693) { ...")
@@ -37,7 +37,7 @@ Types](http://graphql.org/learn/schema/) guide, as well as the current state of
 [this PR](https://github.com/facebook/graphql/pull/90).
 
 ```clojure
-(require '[alumbra.generators.schema :refer [-schema]])
+(require '[alumbra.generators.raw.schema :refer [-schema]])
 
 (clojure.test.check.generators/sample -schema 1)
 ;; => ("schema {query: O, mutation: B}\ninterface G {D(c: [I]): [O]}\nenum F {O}")

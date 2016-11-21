@@ -1,6 +1,6 @@
-(ns ^:no-doc alumbra.generators.variables
+(ns ^:no-doc alumbra.generators.raw.variables
   (:require [clojure.test.check.generators :as gen]
-            [alumbra.generators
+            [alumbra.generators.raw
              [common :refer  [-variable maybe]]
              [type :refer [-type]]
              [value :refer [-const]]]

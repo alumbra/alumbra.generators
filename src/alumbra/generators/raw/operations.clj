@@ -1,6 +1,6 @@
-(ns alumbra.generators.operations
+(ns alumbra.generators.raw.operations
   (:require [clojure.test.check.generators :as gen]
-            [alumbra.generators
+            [alumbra.generators.raw
              [common :refer [-name maybe rarely]]
              [directives :refer [-directives]]
              [selection-set :refer [-selection-set]]

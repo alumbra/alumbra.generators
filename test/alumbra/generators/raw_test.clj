@@ -1,8 +1,8 @@
-(ns alumbra.generators-test
+(ns alumbra.generators.raw-test
   (:require [clojure.test.check
              [properties :as prop]
              [clojure-test :refer [defspec]]]
-            [alumbra.generators
+            [alumbra.generators.raw
              [document :refer [-document]]
              [schema :refer [-schema]]]))
 

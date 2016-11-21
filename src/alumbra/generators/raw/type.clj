@@ -1,6 +1,6 @@
-(ns alumbra.generators.type
+(ns alumbra.generators.raw.type
   (:require [clojure.test.check.generators :as gen]
-            [alumbra.generators.common :refer [-name]]
+            [alumbra.generators.raw.common :refer [-name]]
             [clojure.string :as string]))
 
 (def -type-name

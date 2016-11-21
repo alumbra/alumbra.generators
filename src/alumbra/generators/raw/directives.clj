@@ -1,7 +1,7 @@
-(ns alumbra.generators.directives
+(ns alumbra.generators.raw.directives
   (:require [clojure.test.check.generators :as gen]
             [clojure.string :as string]
-            [alumbra.generators
+            [alumbra.generators.raw
              [arguments :refer [-arguments]]
              [common :refer [-name rarely]]]))
 

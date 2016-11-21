@@ -1,6 +1,6 @@
-(ns alumbra.generators.schema
+(ns alumbra.generators.raw.schema
   (:require [clojure.test.check.generators :as gen]
-            [alumbra.generators
+            [alumbra.generators.raw
              [common :refer [-name maybe rarely]]
              [type :refer [-type -type-name]]
              [value :refer [-float -string -bool -enum -integer]]]
