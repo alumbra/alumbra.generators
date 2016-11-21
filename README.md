@@ -39,7 +39,10 @@ produce a valid operation for the above schema:
 ```clojure
 (rand-nth
   (clojure.test.check.generators/sample (gen-operation :query "Q")))
-;; => "query Q { __type(name: \"XcLjj8cn8rUQr\") { name, possibleTypes { name } } }"
+;; => "query Q {
+;;       __schema { queryType { inputFields { defaultValue, description }, enumValues { name, isDeprecated }, name } },
+;;       person(name: \"Mu90ChZ1ht\") { name }
+;;     }"
 ```
 
 As you can see, the implicitly given introspection fields will be accessed
