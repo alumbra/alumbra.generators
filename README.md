@@ -19,7 +19,8 @@ __[Documentation](https://alumbra.github.io/alumbra.generators/)__
 ### Valid Data
 
 Given a GraphQL schema ([parsed][alumbra-parser] and
-[analyzed][alumbra-analyzer]), we can build a generator for GraphQL operations:
+[analyzed][alumbra-analyzer]), a generator for valid GraphQL operations can
+be built:
 
 ```clojure
 (require '[alumbra.generators :as gen])
@@ -33,8 +34,9 @@ Given a GraphQL schema ([parsed][alumbra-parser] and
      (alumbra.analyzer/analyze-schema alumbra.parser/parse-schema))))
 ```
 
-This can now be called with teh desired operation type and a name and will
-produce a valid operation for the above schema:
+This is a function that takes two parameters (the operation type and name) and
+produces a string value representing our desired operation, conforming to the
+above schema.
 
 ```clojure
 (rand-nth
