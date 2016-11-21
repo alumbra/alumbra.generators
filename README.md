@@ -8,14 +8,48 @@ A collection of [test.check][tc] generators for [GraphQL][ql] queries.
 [tc]: https://github.com/clojure/test.check
 [ql]: http://graphql.org/
 
-The generated queries are (so far) not semantically correct, so they can mainly
-be used to verify different GraphQL parser implementations.
+There are two types of queries that can be generated: random ones that show
+syntactic correctness but might be utter nonsense, and those based on an
+analyzed schema, being both syntactically and semantically correct.
 
 ## Usage
 
 __[Documentation](https://alumbra.github.io/alumbra.generators/)__
 
-__Document Generator__
+### Valid Queries
+
+Given a GraphQL schema ([parsed][alumbra-parser] and
+[analyzed][alumbra-analyzer]), we can build a generator for GraphQL operations:
+
+```clojure
+(require '[alumbra.generators :as gen])
+
+(def gen-operation
+  (gen/operation
+    (-> "type Person { name: String!, pets: [Pet!] }
+         type Pet { name: String!, meows: Boolean }
+         type QueryRoot { person(name: String!): Person }
+         schema { query: QueryRoot }"
+     (alumbra.analyzer/analyze-schema alumbra.parser/parse-schema))))
+```
+
+This can now be called with teh desired operation type and a name and will
+produce a valid operation for the above schema:
+
+```clojure
+(rand-nth
+  (clojure.test.check.generators/sample (gen-operation :query "Q")))
+;; => "query Q { __type(name: \"XcLjj8cn8rUQr\") { name, possibleTypes { name } } }"
+```
+
+As you can see, the implicitly given introspection fields will be accessed
+just as well.
+
+### Random Data
+
+These generators can be found in the `alumbra.generators.raw.*` namespaces.
+
+#### Query Documents
 
 This generates a GraphQL document as described in the [GraphQL
 specification][ql-spec].
@@ -29,7 +63,7 @@ specification][ql-spec].
 
 [ql-spec]: https://facebook.github.io/graphql/
 
-__Schema Generator__
+#### Schema Document
 
 This generates a GraphQL IDL document. There is, as of the writing of this
 README, no complete specification on this, so it is based on the [Schemas and
