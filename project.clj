@@ -5,9 +5,12 @@
             :url "https://opensource.org/licenses/MIT"
             :year 2016
             :key "mit"}
-  :dependencies [[org.clojure/clojure "1.9.0-alpha13" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha14" :scope "provided"]
                  [org.clojure/test.check "0.9.0" :scope "provided"]]
-  :profiles {:codox
+  :profiles {:dev
+             {:dependencies [[alumbra/parser "0.1.1"]
+                             [alumbra/analyzer "0.1.0"]]}
+             :codox
              {:plugins [[lein-codox "0.10.0"]]
               :dependencies [[codox-theme-rdash "0.1.1"]]
               :codox {:project {:name "alumbra.generators"}
