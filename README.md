@@ -16,7 +16,7 @@ analyzed schema, being both syntactically and semantically correct.
 
 __[Documentation](https://alumbra.github.io/alumbra.generators/)__
 
-### Valid Queries
+### Valid Data
 
 Given a GraphQL schema ([parsed][alumbra-parser] and
 [analyzed][alumbra-analyzer]), we can build a generator for GraphQL operations:
@@ -45,6 +45,9 @@ produce a valid operation for the above schema:
 As you can see, the implicitly given introspection fields will be accessed
 just as well.
 
+[alumbra-parser]: https://github.com/alumbra/alumbra.parser
+[alumbra-analyzer]: https://github.com/alumbra/alumbra.analyzer
+
 ### Random Data
 
 These generators can be found in the `alumbra.generators.raw.*` namespaces.
@@ -63,7 +66,7 @@ specification][ql-spec].
 
 [ql-spec]: https://facebook.github.io/graphql/
 
-#### Schema Document
+#### Schema Documents
 
 This generates a GraphQL IDL document. There is, as of the writing of this
 README, no complete specification on this, so it is based on the [Schemas and
