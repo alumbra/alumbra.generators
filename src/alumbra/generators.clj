@@ -1,6 +1,7 @@
 (ns alumbra.generators
   (:require [alumbra.generators
-             [selection-set :refer [selection-set-generators]]]
+             [selection-set :refer [selection-set-generators]]
+             [value :refer [value-generators]]]
             [clojure.test.check
              [generators :as gen]]
             [clojure.string :as string]))
@@ -46,17 +47,19 @@
 
 (comment
   (require '[alumbra [parser :as parser] [analyzer :as analyzer]])
+  (def schema
+    (-> "type Person { name: String!, pets: [Pet!] }
+         type Pet { name: String!, meows: Boolean }
+         union PersonOrPet = Person | Pet
+         enum PositionKind { LONG, LAT }
+         input Position { x: Int, y: Int, k: PositionKind! }
+         type QueryRoot { person(name: String!): Person, random(seed: Position!): PersonOrPet }
+         schema { query: QueryRoot }"
+        (analyzer/analyze-schema parser/parse-schema)))
 
   (def ss
     (selection-set-generators
-      {:schema
-       (-> "type Person { name: String!, pets: [Pet!] }
-            type Pet { name: String!, meows: Boolean }
-            union PersonOrPet = Person | Pet
-            type QueryRoot { person(name: String!): Person, random: PersonOrPet }
-            schema { query: QueryRoot }"
-           (analyzer/analyze-schema parser/parse-schema))
-       :value-gen (constantly (gen/return "YYY"))
-       }))
+      {:schema schema
+       :value-gen (value-generators {:schema schema})}))
 
   (last (gen/sample (ss "QueryRoot") 100)))
