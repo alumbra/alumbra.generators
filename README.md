@@ -40,7 +40,9 @@ produce a valid operation for the above schema:
 (rand-nth
   (clojure.test.check.generators/sample (gen-operation :query "Q")))
 ;; => "query Q {
-;;       __schema { queryType { inputFields { defaultValue, description }, enumValues { name, isDeprecated }, name } },
+;;       __schema {
+;;         queryType { inputFields { defaultValue, description }, ... }
+;;       },
 ;;       person(name: \"Mu90ChZ1ht\") { name }
 ;;     }"
 ```
