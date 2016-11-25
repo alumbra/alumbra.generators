@@ -34,9 +34,9 @@ be built:
      (alumbra.analyzer/analyze-schema alumbra.parser/parse-schema))))
 ```
 
-This is a function that takes two parameters (the operation type and name) and
-produces a string value representing our desired operation, conforming to the
-above schema.
+This is a function that takes the operation type and, optionally, operation name
+and produces a string value representing our desired operation, conforming to
+the above schema.
 
 ```clojure
 (rand-nth

@@ -3,6 +3,7 @@
              [selection-set :refer [selection-set-generators]]
              [value :refer [value-generators]]]
             [alumbra.generators.raw
+             [common :refer [maybe -name]]
              [document :refer [-document]]
              [schema :refer [-schema]]]
             [clojure.test.check
@@ -23,10 +24,13 @@
 
 ;; ## Public Functions
 
+;; ### Valid Data
+
 (defn operation
   "Create a function that can be called with an operation type (e.g.
-   :query, :mutation, :subscription), as well as the name of the operation,
-   and will produce an operation matching the given analyzed schema.
+   :query, :mutation, :subscription) and, optionally, the desired name
+   of the operation, and will produce an operation matching the given
+   analyzed schema.
 
    ```clojure
    (def schema
@@ -37,7 +41,8 @@
    (def gen-operation
      (operation schema))
 
-   (gen/sample (gen-operation :query \"Q\"))
+   (gen/sample (gen-operation :query))
+   (gen/sample (gen-operation :query \"MyQueryName\"))
    ```
 
    `schema` must conform to `:alumbra/analyzed-schema` (see alumbra.spec)."
@@ -50,14 +55,27 @@
         type->gen {:query        (make-operation-gen opts :query)
                    :mutation     (make-operation-gen opts :mutation)
                    :subscription (make-operation-gen opts :subscription)}]
-    (fn [k operation-name]
+    (fn [k & [operation-name]]
       (if-let [gen (type->gen k)]
-        (gen/fmap
-          #(str (name k) " " (name operation-name) " " %)
-          gen)
+        (cond operation-name
+              (gen/fmap
+                #(str (name k) " " (name operation-name) " " %)
+                gen)
+
+              (= k :query)
+              (gen/let [n (maybe -name)
+                        s gen]
+                (if n (str "query " n " " s) s))
+
+              :else
+              (gen/let [n -name
+                        s gen]
+                (str (name k) " " n " " s)))
         (throw
           (IllegalArgumentException.
             (str "no generator for operation type: " k)))))))
+
+;; ### Random Data
 
 (defn raw-document
   "Create a generator for a random (i.e. not semantically sound) GraphQL
