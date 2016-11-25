@@ -1,4 +1,4 @@
-(defproject alumbra/generators "0.2.2"
+(defproject alumbra/generators "0.2.3-SNAPSHOT"
   :description "GraphQL Generators for Clojure's test.check"
   :url "https://github.com/alumbra/alumbra.generators"
   :license {:name "MIT License"
