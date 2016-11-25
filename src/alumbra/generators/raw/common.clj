@@ -16,10 +16,9 @@
 
 (def -name
   "Generate a valid GraphQL name token."
-  (->> (gen/tuple
-         gen/char-alpha
-         gen/string-alphanumeric)
-       (gen/fmap #(apply str %))))
+  (gen/let [first-char gen/char-alpha
+            rest-chars (gen/vector gen/char-alphanumeric 0 8)]
+    (apply str first-char rest-chars)))
 
 (def -variable
   "Generate a valid GraphQL variable token."

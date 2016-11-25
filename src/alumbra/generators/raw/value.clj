@@ -32,9 +32,9 @@
 
 (def -string
   "Generate a valid GraphQL string value."
-  (->> (gen/not-empty gen/string-ascii)
+  (->> (gen/vector gen/char-alphanumeric 1 16)
        (gen/fmap #(string/replace
-                    %
+                    (apply str %)
                     #"[\"\\]"
                     (fn [[match]]
                       (str "\\" match))))

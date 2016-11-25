@@ -6,22 +6,12 @@
 
 ;; ## Scalars
 
-(def ^:private short-string
-  "Generate a valid GraphQL string value."
-  (->> (gen/vector gen/char-alphanumeric 1 16)
-       (gen/fmap #(string/replace
-                    (apply str %)
-                    #"[\"\\]"
-                    (fn [[match]]
-                      (str "\\" match))))
-       (gen/fmap #(str \" % \"))))
-
 (defn- scalar-generator
   [{:keys [scalars]} {:keys [type-name]}]
   (or (get scalars type-name)
       (case type-name
-        "ID"      short-string
-        "String"  short-string
+        "ID"      v/-string
+        "String"  v/-string
         "Boolean" v/-bool
         "Float"   v/-float
         "Int"     v/-integer)))
