@@ -17,16 +17,18 @@
 ;; ### Fields
 
 (defn- field-generator
-  [{:keys [type-name->gen] :as opts}
+  [{:keys [type-name->gen directive-gen] :as opts}
    {:keys [field-name type-name arguments]}]
   (let [arguments-gen (arguments-generator opts arguments)]
     (->> (gen/tuple
            (type-name->gen type-name)
-           arguments-gen)
+           arguments-gen
+           (directive-gen :field))
          (gen/fmap
-           (fn [[selection-set arguments]]
+           (fn [[selection-set arguments directives]]
              (str field-name
                   arguments
+                  (some->> directives (str " "))
                   (when (seq selection-set)
                     (str " " selection-set))))))))
 
@@ -62,9 +64,15 @@
 ;; ### Inline Spread
 
 (defn- spread-generator
-  [{:keys [type-name->gen]} spread-type-name]
-  (->> (type-name->gen spread-type-name)
-       (gen/fmap #(str "... on " spread-type-name " " %))))
+  [{:keys [type-name->gen directive-gen]} spread-type-name]
+  (->> (gen/tuple
+         (type-name->gen spread-type-name)
+         (directive-gen :inline-fragment))
+       (gen/fmap
+         (fn [[selection-set directives]]
+           (str "... on " spread-type-name
+                (some->> directives (str " "))
+                " " selection-set)))))
 
 (defn- weighted-spread-selector
   [_ spread-name->gen]

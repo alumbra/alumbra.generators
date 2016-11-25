@@ -1,5 +1,6 @@
 (ns alumbra.generators
   (:require [alumbra.generators
+             [directive :refer [directive-generators]]
              [selection-set :refer [selection-set-generators]]
              [value :refer [value-generators]]]
             [alumbra.generators.raw
@@ -26,6 +27,17 @@
 
 ;; ### Valid Data
 
+(defmacro ^:private prepare->
+  [opts & pairs]
+  (if (seq pairs)
+    (let [[k [f & args] & rst] pairs]
+      `(let [opts#   ~opts
+             result# (~f opts# ~@args)]
+         (prepare->
+           (assoc opts# ~k result#)
+           ~@rst)))
+    opts))
+
 (defn operation
   "Create a function that can be called with an operation type (e.g.
    :query, :mutation, :subscription) and, optionally, the desired name
@@ -47,11 +59,11 @@
 
    `schema` must conform to `:alumbra/analyzed-schema` (see alumbra.spec)."
   [schema & [opts]]
-  (let [opts (assoc opts :schema schema)
-        value-gen (value-generators opts)
-        opts (assoc opts :value-gen value-gen)
-        selection-set-gen (selection-set-generators opts)
-        opts (assoc opts :selection-set-gen selection-set-gen)
+  (let [opts (prepare->
+               (assoc opts :schema schema)
+               :value-gen         (value-generators)
+               :directive-gen     (directive-generators)
+               :selection-set-gen (selection-set-generators))
         type->gen {:query        (make-operation-gen opts :query)
                    :mutation     (make-operation-gen opts :mutation)
                    :subscription (make-operation-gen opts :subscription)}]
@@ -106,4 +118,4 @@
 
   (def gen (operation schema))
 
-  (last (gen/sample (gen :query "Q") 100)))
+  (last (gen/sample (gen :query) 100)))
