@@ -6,7 +6,7 @@
   [g]
   (gen/frequency
     [[1 (gen/return nil)]
-     [99 g]]))
+     [9 g]]))
 
 (defn ^:no-doc rarely
   [g]
