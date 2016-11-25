@@ -9,14 +9,19 @@
 
 (defn- named-operation-gen
   [t]
-  (gen/let [n (gen/fmap string/capitalize -name)
-            v (maybe -variable-definitions)
-            d (rarely -directives)
-            s -selection-set]
+  (gen/let [t (if (= t "query") (maybe (gen/return t)) (gen/return t))
+            n  (maybe (gen/fmap string/capitalize -name))
+            v  (maybe -variable-definitions)
+            d  (rarely -directives)
+            s  -selection-set]
     (gen/return
-      (str t " " n v
-           (some->> d (str " "))
-           " " s))))
+      (if t
+        (str t " "
+             (some-> n (str " "))
+             (some-> v (str " "))
+             (some-> d (str " "))
+             s)
+        s))))
 
 (def -query-definition
   "Generate a GraphQL `query` definition."

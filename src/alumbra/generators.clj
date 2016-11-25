@@ -69,20 +69,18 @@
                    :subscription (make-operation-gen opts :subscription)}]
     (fn [k & [operation-name]]
       (if-let [gen (type->gen k)]
-        (cond operation-name
-              (gen/fmap
-                #(str (name k) " " (name operation-name) " " %)
-                gen)
-
-              (= k :query)
-              (gen/let [n (maybe -name)
-                        s gen]
-                (if n (str "query " n " " s) s))
-
-              :else
-              (gen/let [n -name
-                        s gen]
-                (str (name k) " " n " " s)))
+        (if operation-name
+          (gen/fmap
+            #(str (name k) " " (name operation-name) " " %)
+            gen)
+          (gen/let [t (if (= k :query)
+                        (maybe (gen/return (name k)))
+                        (gen/return (name k)))
+                    n (maybe -name)
+                    s gen]
+            (if t
+              (str t " " (some-> n (str " ")) s)
+              s)))
         (throw
           (IllegalArgumentException.
             (str "no generator for operation type: " k)))))))
