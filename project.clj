@@ -6,7 +6,8 @@
             :year 2016
             :key "mit"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha14" :scope "provided"]
-                 [org.clojure/test.check "0.9.0" :scope "provided"]]
+                 [org.clojure/test.check "0.9.0" :scope "provided"]
+                 [xsc/stateful "0.1.0-SNAPSHOT"]]
   :profiles {:dev
              {:dependencies [[alumbra/parser "0.1.4"]
                              [alumbra/analyzer "0.1.2"]]}

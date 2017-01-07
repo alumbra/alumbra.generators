@@ -1,8 +1,11 @@
 (ns alumbra.generators.selection-set
   (:require [alumbra.generators.arguments
              :refer [arguments-generator]]
+            [alumbra.generators.raw
+             [fragments :refer [-fragment-name]]]
             [clojure.test.check
              [generators :as gen]]
+            [stateful.core :as stateful]
             [clojure.string :as string]))
 
 ;; ## Generic Generators
@@ -144,6 +147,31 @@
 
 ;; ## Selection Set
 
+(defn- fragment-generator
+  [gen type-name]
+  ;; Instead of returning the selection set directly, we decide on a fragment
+  ;; name and put the selection set into the generator state, appending it
+  ;; later on the top-level.
+  (gen/let [selection-set  gen
+            free-name?     (gen/fmap (comp complement set)
+                                     (stateful/value [:fragment-names]))
+            fragment-name  (gen/such-that free-name? -fragment-name 100)]
+    (stateful/return*
+      (str "{ ..." fragment-name " }")
+      (fn [state]
+        (-> state
+            (update :fragments (fnil conj [])
+                    (str "fragment " fragment-name
+                         " on " type-name
+                         " " selection-set))
+            (update :fragment-names (fnil conj #{}) fragment-name))))))
+
+(defn- maybe-fragment-generator
+  [gen type-name]
+  (gen/frequency
+    [[95 gen]
+     [5 (fragment-generator gen type-name)]]))
+
 (defn selection-set-generators
   "Generate a function that, given a type name, produces a generator for said
    type's selection set."
@@ -153,7 +181,8 @@
                          (gen/bind
                            (gen/return nil)
                            (fn [_]
-                             (or (get @gen-promise type-name)
+                             (or (some-> (get @gen-promise type-name)
+                                         (maybe-fragment-generator type-name))
                                  (gen/return "")))))
         opts (assoc opts :type-name->gen type-name->gen)]
     (->> (merge

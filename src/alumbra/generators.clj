@@ -9,19 +9,20 @@
              [schema :refer [-schema]]]
             [clojure.test.check
              [generators :as gen]]
+            [stateful.core :as stateful]
             [clojure.string :as string]))
 
 ;; ## TODO
 ;;
 ;; - Variables
-;; - Named Fragments
 
 ;; ## Helpers
 
 (defn- make-operation-gen
   [{:keys [schema selection-set-gen]} k]
   (when-let [t (get-in schema [:schema-root :schema-root-types (name k)])]
-    (selection-set-gen t)))
+    (stateful/generator
+      (selection-set-gen t))))
 
 ;; ## Public Functions
 
@@ -77,10 +78,15 @@
                         (maybe (gen/return (name k)))
                         (gen/return (name k)))
                     n (maybe -name)
-                    s gen]
-            (if t
-              (str t " " (some-> n (str " ")) s)
-              s)))
+                    [s state] gen]
+            (->> (vector
+                   (if t
+                     (str t " " (some-> n (str " ")) s)
+                     s)
+                   (some->> (:fragments state)
+                            (string/join " ")))
+                 (filter identity)
+                 (string/join " "))))
         (throw
           (IllegalArgumentException.
             (str "no generator for operation type: " k)))))))
@@ -116,4 +122,4 @@
 
   (def gen (operation schema))
 
-  (last (gen/sample (gen :query) 100)))
+  (gen/generate (gen :query) 1))
